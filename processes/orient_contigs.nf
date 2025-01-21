@@ -9,7 +9,7 @@ def getSubstitutionString(meta){
 process ORIENT_CONTIGS {
 	tag "$meta.sample_id"
 	label "process_single"
-    publishDir "${projectDir}/results/04_ORIENTED_CONTIGS/", mode: "copy"
+    publishDir "${params.outdir}/results/04_ORIENTED_CONTIGS/", mode: "copy"
 
     input:
 		tuple val(meta), path(assembly_fasta), path(assembly_bam)

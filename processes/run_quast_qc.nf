@@ -2,9 +2,8 @@
 
 process RUN_QUAST_QC {
     tag "$meta.sample_id"
-
     label "process_low"
-    publishDir "${projectDir}/results/06_QUAST_QC/", mode: "copy"
+    publishDir "${params.outdir}/results/06_QUAST_QC/", mode: "copy"
 
     input:
         tuple val(meta), path(assembly_fasta)
@@ -14,11 +13,10 @@ process RUN_QUAST_QC {
 
     script:
         """
-        python quast.py \\
+        quast \\
             ${assembly_fasta} \\
             -r ${meta.reference} \\
             -t ${task.cpus}
-
         """
 
 

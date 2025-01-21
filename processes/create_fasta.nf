@@ -1,6 +1,6 @@
 process CREATE_FASTA {
     tag "$meta.sample_id"
-    publishDir "${projectDir}/results/02_FASTA/", mode: "copy"
+    publishDir "${params.outdir}/results/02_FASTA/", mode: "copy"
 
     input: 
         tuple val(meta), path(assembly_graph)

@@ -1,7 +1,7 @@
 process CREATE_BAM {
     tag "$meta.sample_id"
-    //label "process_single"
-    //publishDir "${projectDir}/results/03_BAM_files/", mode: "copy"
+    label "process_single"
+    publishDir "${params.outdir}/results/03_BAM_files/", mode: "copy"
 
     input:
         tuple val(meta), path(assembly_fasta)
