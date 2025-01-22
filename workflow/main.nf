@@ -7,14 +7,15 @@ this is a priority.
  */
 
 // Processes
-include { ASSEMBLE_HIFIASM                 } from '../processes/assemble_hifiasm_graph'
-include { CREATE_FASTA                     } from '../processes/create_fasta'
-include { CREATE_BAM                       } from '../processes/create_bam'
-include { CREATE_BAM as CREATE_BAM_CONTIGS } from '../processes/create_bam'
-include { ORIENT_CONTIGS                   } from '../processes/orient_contigs'
+include { ASSEMBLE_HIFIASM                              } from '../processes/assemble_hifiasm_graph'
+include { CREATE_FASTA                                  } from '../processes/create_fasta'
+include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_UNORIENTED } from '../processes/create_bam'
+include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_ORIENTED   } from '../processes/create_bam'
+include { ORIENT_CONTIGS                                } from '../processes/orient_contigs'
+include { RUN_QUAST_QC                                  } from '../processes/run_quast_qc'
 
 // Subworkflows
-include { PARSE_SAMPLESHEET                } from '../subworkflows/parse_samplesheet'
+include { PARSE_SAMPLESHEET                             } from '../subworkflows/parse_samplesheet'
 
 
 workflow {
@@ -22,26 +23,38 @@ workflow {
     reads_ch.map{it[0].sample_id}.view()
 
     ASSEMBLE_HIFIASM ( reads_ch )
-    //ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
+    ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
+
+    CREATE_FASTA ( ch_primary_contigs )
+    ch_primary_fasta = CREATE_FASTA.out.contig_fa // => [ [sample_id, reference], fasta ]
+
+    ALIGN_FA_TO_REF_UNORIENTED ( ch_primary_fasta )
+    ch_primary_bam = ALIGN_FA_TO_REF_UNORIENTED.out.bam // => [ [sample_id, reference], bam ]
+
+    // Join fasta and bam channels to ensure consistent order 
+    ch_fasta_bam = ch_primary_fasta
+        .join( ch_primary_bam, by: 0 ) // => [ meta, fasta, bam ]
+
+    ORIENT_CONTIGS ( ch_fasta_bam )
+    ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa
     
-    //CREATE_FASTA ( ch_primary_contigs )
-    // ch_primary_contigs = Channel
-    //     .from( params.primary_contigs )
-    //     .map { row ->
-    //         tuple( row[0], file(row[1]) )
-    //     }
-    // CREATE_FASTA ( ch_primary_contigs )
-    // ch_primary_fasta = CREATE_FASTA.out.contig_fa // => [ [sample_id, reference], fasta ]
+    ALIGN_FA_TO_REF_ORIENTED ( ch_oriented_ctgs )
+    RUN_QUAST_QC ( ch_oriented_ctgs )
+}
 
-    // CREATE_BAM ( ch_primary_fasta )
-    // ch_primary_bam = CREATE_BAM.out.bam // => [ [sample_id, reference], bam ]
+workflow.onComplete {
+    // Create pipeline results directory
+    file("${params.outdir}/results/pipeline_summary").mkdirs()
 
-    // // Join fasta and bam channels to ensure consistent order 
-    // ch_fasta_bam = ch_primary_fasta
-    //     .join( ch_primary_bam, by: 0 ) // => [ meta, fasta, bam ]
-
-    // ORIENT_CONTIGS ( ch_fasta_bam )
-    // ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa
-    
-    // CREATE_BAM_CONTIGS ( ch_oriented_ctgs )
+    // Write summary file
+    def summaryFile = file("${params.outdir}/results/pipeline_summary/pipeline_summary.txt")
+    summaryFile.text = """
+        Pipeline finished successfully!
+        Nextflow version: ${nextflow.version}
+        Run time: ${workflow.duration}
+        Run name: ${workflow.runName}
+        Command line arguments: ${workflow.args.join(' ')}
+        Parameters:
+        ${params.inspect()}
+        """
 }

@@ -9,19 +9,14 @@ process RUN_QUAST_QC {
         tuple val(meta), path(assembly_fasta)
 
     output:
-        path("quast_results/*"), emit: quast_results
+        path("${meta.sample_id}_quast/*"), emit: quast_results
 
     script:
         """
         quast \\
             ${assembly_fasta} \\
+            -o ${meta.sample_id}_quast \\
             -r ${meta.reference} \\
             -t ${task.cpus}
         """
-
-
-
-
-
-
 }

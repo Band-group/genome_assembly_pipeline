@@ -1,5 +1,6 @@
 process CREATE_FASTA {
     tag "$meta.sample_id"
+    label "process_single"
     publishDir "${params.outdir}/results/02_FASTA/", mode: "copy"
 
     input: 
