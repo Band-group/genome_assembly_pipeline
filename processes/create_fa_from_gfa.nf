@@ -1,4 +1,4 @@
-process CREATE_FASTA {
+process CREATE_FA_FROM_GFA {
     tag "$meta.sample_id"
     label "process_single"
     publishDir "${params.outdir}/results/02_FASTA/", mode: "copy"

@@ -6,8 +6,8 @@ process ALIGN_FA_TO_REF {
         tuple val(meta), path(assembly_fasta)
 
     output:
-        tuple val(meta), path("${meta.sample_id}_sorted.bam"), emit: bam
-        tuple val(meta), path("*.bai"), emit: bai
+        tuple val(meta), path("${meta.sample_id}_sorted.bam"), emit: aligned_fa_bam
+        tuple val(meta), path("*.bai"), emit: aligned_fa_bai
 
     script:
         """

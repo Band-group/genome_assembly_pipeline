@@ -8,9 +8,10 @@ this is a priority.
 
 // Processes
 include { ASSEMBLE_HIFIASM                              } from '../processes/assemble_hifiasm_graph'
-include { CREATE_FASTA                                  } from '../processes/create_fasta'
-include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_UNORIENTED } from '../processes/create_bam'
-include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_ORIENTED   } from '../processes/create_bam'
+include { ALIGN_READS_TO_REF                            } from '../processes/align_reads_to_ref'
+include { CREATE_FA_FROM_GFA                            } from '../processes/create_fa_from_gfa'
+include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_UNORIENTED } from '../processes/align_fa_to_ref'
+include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_ORIENTED   } from '../processes/align_fa_to_ref'
 include { ORIENT_CONTIGS                                } from '../processes/orient_contigs'
 include { RUN_QUAST_QC                                  } from '../processes/run_quast_qc'
 
@@ -25,11 +26,13 @@ workflow {
     ASSEMBLE_HIFIASM ( reads_ch )
     ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
 
-    CREATE_FASTA ( ch_primary_contigs )
-    ch_primary_fasta = CREATE_FASTA.out.contig_fa // => [ [sample_id, reference], fasta ]
+    ALIGN_READS_TO_REF (reads_ch )
+
+    CREATE_FA_FROM_GFA ( ch_primary_contigs )
+    ch_primary_fasta = CREATE_FA_FROM_GFA.out.contig_fa // => [ [sample_id, reference], fasta ]
 
     ALIGN_FA_TO_REF_UNORIENTED ( ch_primary_fasta )
-    ch_primary_bam = ALIGN_FA_TO_REF_UNORIENTED.out.bam // => [ [sample_id, reference], bam ]
+    ch_primary_bam = ALIGN_FA_TO_REF_UNORIENTED.out.aligned_fa_bam // => [ [sample_id, reference], bam ]
 
     // Join fasta and bam channels to ensure consistent order 
     ch_fasta_bam = ch_primary_fasta
