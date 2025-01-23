@@ -12,7 +12,7 @@ process ASSEMBLE_HIFIASM {
     
     script:
         def n_hap = params.hifiasm_n_hap ? "--n-hap ${params.hifiasm_n_hap}" : ''
-        def purge_dup_lvl = params.hifiasm_purge_dup_lvl ? "-l ${params.hifiasm_purge_dup_lvl}" : ''
+        def purge_dup_lvl = "-l${params.hifiasm_purge_dup_lvl}"
         def d = "-D ${params.hifiasm_d}"
         def n = "-N ${params.hifiasm_n}"
 
