@@ -11,7 +11,7 @@ process ASSEMBLE_HIFIASM {
         tuple val(meta), path("${meta.sample_id}*"), emit: all_output
     
     script:
-        def n_haps = params.hifiasm_n_haps ? "--n-haps ${params.hifiasm_n_haps}" : ''
+        def n_haps = params.hifiasm_n_haps ? "--n-hap ${params.hifiasm_n_haps}" : ''
         def purge_dup_lvl = params.hifiasm_purge_dup_lvl ? "-l ${params.hifiasm_purge_dup_lvl}" : ''
         def d = "-D ${params.hifiasm_d}"
         def n = "-N ${params.hifiasm_n}"
