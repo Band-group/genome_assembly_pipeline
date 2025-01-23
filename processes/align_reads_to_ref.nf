@@ -12,7 +12,7 @@ process ALIGN_READS_TO_REF {
 
     script:
         """
-        minimap2 -ax map-hifi -t ${task.cpus} ${fastq} ${meta.reference} > ${meta.sample_id}_reads2ref.sam
+        minimap2 -ax map-hifi -t ${task.cpus} ${meta.reference} ${fastq} > ${meta.sample_id}_reads2ref.sam
         samtools sort -o ${meta.sample_id}_reads2ref_sorted.bam ${meta.sample_id}_reads2ref.sam
 		samtools index ${meta.sample_id}_reads2ref_sorted.bam
         """
