@@ -1,4 +1,4 @@
 sample_id,fastq,reference
-s1,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/practice.fastq,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/reference.fa
-s2,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/practice2.fastq,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/reference1.fa
-s3,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/practice3.fastq,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/reference2.fa
+s1,/path/to/fastq,/path/to/reference
+s2,/path/to/fastq,/path/to/reference
+s3,/path/to/fastq,/path/to/reference
