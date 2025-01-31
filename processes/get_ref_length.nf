@@ -10,5 +10,6 @@ process GET_REF_LENGTH {
     script:
         """
         ref_length=\$(awk 'BEGIN { total=0 } !/^>/ { total += length(\$0) } END { print total }' ${ref})
+        echo \$ref_length
         """
 }
