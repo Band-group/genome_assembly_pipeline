@@ -22,6 +22,9 @@ include { SUBSAMPLE_FASTQ                               } from '../subworkflows/
 
 workflow {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet ) 
+    // my_channel = Channel.of( [[sample:'a', reference:'b'] , '/my/path'], [[sample:'c', reference:'d'] , '/my/path2'] )
+    // my_channel.map { it[0].reference }.view()
+    
     // QC
     RUN_FASTQC( ch_fastq )
     SUBSAMPLE_FASTQ ( ch_fastq, params.regions_bed )
@@ -46,19 +49,19 @@ workflow {
     // RUN_QUAST_QC ( ch_oriented_ctgs )
 }
 
-workflow.onComplete {
-    // Create pipeline results directory
-    file("${params.outdir}/results/pipeline_summary").mkdirs()
+// workflow.onComplete {
+//     // Create pipeline results directory
+//     file("${params.outdir}/results/pipeline_summary").mkdirs()
 
-    // Write summary file
-    def summaryFile = new File("${params.outdir}/results/pipeline_summary/pipeline_summary.txt")
-    summaryFile.text = """
-        Pipeline finished successfully!
-        Nextflow version: ${nextflow.version}
-        Run time: ${workflow.duration}
-        Run name: ${workflow.runName}
-        Command line arguments: ${workflow.args.join(' ')}
-        Parameters:
-        ${params.inspect()}
-        """
-}
+//     // Write summary file
+//     def summaryFile = new File("${params.outdir}/results/pipeline_summary/pipeline_summary.txt")
+//     summaryFile.text = """
+//         Pipeline finished successfully!
+//         Nextflow version: ${nextflow.version}
+//         Run time: ${workflow.duration}
+//         Run name: ${workflow.runName}
+//         Command line arguments: ${workflow.args.join(' ')}
+//         Parameters:
+//         ${params.inspect()}
+//         """
+// }
