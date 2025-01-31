@@ -24,7 +24,7 @@ workflow {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet ) 
     // QC
     RUN_FASTQC( ch_fastq )
-    SUBSAMPLE_FASTQ ( ch_fastq, ch_aligned_reads, params.regions_bed )
+    SUBSAMPLE_FASTQ ( ch_fastq, params.regions_bed )
     // Assembly
     // ASSEMBLE_HIFIASM ( ch_fastq )
     // ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
