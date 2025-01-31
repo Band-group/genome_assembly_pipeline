@@ -8,7 +8,7 @@ process SUBSAMPLE_FASTQ_READS {
         val(reference_length)
 
     output:
-        tuple val(meta), path("${meta.sample_id}_subsampled.fastq.gz"), emit: sub_fastq
+        tuple val(meta), path("${meta.sample_id}*.fastq.gz"), emit: sub_fastq
     
     script:
         def target_depth = "${params.target_depth}"
@@ -21,7 +21,7 @@ process SUBSAMPLE_FASTQ_READS {
         TARGET_COVERAGE=\$(( ${reference_length} * ${params.target_depth} ))
         
         # Calculate sampling fraction
-        FRACTION=\$(awk "BEGIN {f=${params.target_depth}/\$CURRENT_COVERAGE; print (f>1?1:f)}")
+        FRACTION=\$(awk 'BEGIN {f=$target_depth / \$CURRENT_COVERAGE; print (f>1?1:f)}')
         
         # Subsample fastq file
         seqtk sample -s100 ${fastq} \$FRACTION | gzip > ${meta.sample_id}_\${FRACTION}_subsampled.fastq.gz
