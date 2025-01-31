@@ -1,7 +1,7 @@
 process ALIGN_READS_TO_REF {
     tag "$meta.sample_id"
     label "process_low"
-    publishDir "${params.outdir}/results/02_READS_ALIGNED_TO_REF/", mode: "copy"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/reads2ref", mode: "copy"
 
     input:
         tuple val(meta), path(fastq)
