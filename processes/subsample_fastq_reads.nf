@@ -18,10 +18,9 @@ process SUBSAMPLE_FASTQ_READS {
     
         # Calculate current and target coverage
         CURRENT_COVERAGE=\$(( \$BASES / ${reference_length} ))
-        TARGET_COVERAGE=\$(( ${reference_length} * ${params.target_depth} ))
         
         # Calculate sampling fraction
-        FRACTION=\$(awk 'BEGIN {f=$target_depth / \$CURRENT_COVERAGE; print (f>1?1:f)}')
+        FRACTION=\$(awk "BEGIN {f=${target_depth}/\$CURRENT_COVERAGE; print (f>1?1:f)}")
         
         # Subsample fastq file
         seqtk sample -s100 ${fastq} \$FRACTION | gzip > ${meta.sample_id}_\${FRACTION}_subsampled.fastq.gz
