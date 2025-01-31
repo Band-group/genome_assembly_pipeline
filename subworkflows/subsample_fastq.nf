@@ -18,8 +18,8 @@ workflow SUBSAMPLE_FASTQ {
 
         ch_reference_length = GET_REF_LENGTH ( ch_fastq.meta ).ref_length
         ch_subsampled_fastq = SUBSAMPLE_FASTQ ( ch_fastq, ch_reference_length ).sub_fastq
-        ch_aligned_reads = ALIGN_READS_TO_REF ( ch_subsampled_fastq )
-        ch_region_restricted_bam = FILTER_BAM ( ch_aligned_reads, ch_regions_bed )
+        ch_aligned_reads = ALIGN_READS_TO_REF ( ch_subsampled_fastq ).aligned_reads_bam
+        ch_region_restricted_bam = BAM_FILTER_ON_REGION ( ch_aligned_reads, ch_regions_bed ).reads_bam_filtered
         
         // Collect all BAMs before plotting
         PLOT_BREADTH_OF_COVERAGE ( ch_region_restricted_bam.collect(), ch_regions_bed )
