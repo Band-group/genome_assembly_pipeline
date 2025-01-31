@@ -14,7 +14,7 @@ workflow SUBSAMPLE_FASTQ {
 
     main:
         Channel.fromPath( regions_bed )
-            .set( ch_regions_bed )
+            .set{ ch_regions_bed }
 
         ch_reference_length = GET_REF_LENGTH ( ch_fastq.meta ).ref_length
         ch_subsampled_fastq = SUBSAMPLE_FASTQ_READS ( ch_fastq, ch_reference_length ).sub_fastq
