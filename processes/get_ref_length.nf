@@ -1,5 +1,4 @@
 process GET_REF_LENGTH {
-    tag "$meta.sample_id"
     label "process_single"
 
     input:
