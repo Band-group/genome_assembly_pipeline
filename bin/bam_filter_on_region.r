@@ -7,7 +7,7 @@ library(rtracklayer)
 library(argparse)
 
 # Create parser object
-parser <- ArgumentParser(description = " Filter BAM files based on regions")
+parser <- ArgumentParser(description = " Filter BAM files based on regions provided in BED format.")
 
 # Define arguments
 parser$add_argument("--outdir",
