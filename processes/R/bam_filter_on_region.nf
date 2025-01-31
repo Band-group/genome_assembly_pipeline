@@ -12,6 +12,6 @@ process BAM_FILTER_ON_REGION {
 
     script:
         """
-        Rscript bam_filter_on_region.r --outdir . --regions_bed ${regions_bed} --bams ${reads_bam}
+        bam_filter_on_region.r --outdir . --regions_bed ${regions_bed} --bams ${reads_bam}
         """
 }
