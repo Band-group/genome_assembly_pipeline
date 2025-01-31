@@ -1,4 +1,4 @@
-// Subworkflow to subsample all fastq files to the same coverage and produce a breadth of coverage plot
+// Subworkflow to subsample fastq files and create breadth of coverage plots
 
 // Processes
 include { GET_REF_LENGTH           } from '../processes/get_ref_length'
@@ -16,7 +16,7 @@ workflow SUBSAMPLE_FASTQ {
         Channel.fromPath( regions_bed )
             .set{ ch_regions_bed }
 
-        ch_reference_length = GET_REF_LENGTH ( ch_fastq.map { it[0].reference } ).ref_length
+        ch_reference_length = GET_REF_LENGTH ( ch_fastq.map { it[0].reference } ).ref_length // get reference
 
         ch_subsampled_fastq = SUBSAMPLE_FASTQ_READS ( ch_fastq, ch_reference_length ).sub_fastq
         ch_aligned_reads = ALIGN_READS_TO_REF ( ch_subsampled_fastq ).aligned_reads_bam
