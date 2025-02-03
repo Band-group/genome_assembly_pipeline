@@ -8,7 +8,8 @@ process BAM_FILTER_ON_REGION {
         path(regions_bed)
 
     output:
-        tuple val(meta), path("*regionRestricted.*"), emit: reads_bam_filtered
+        tuple val(meta), path("*regionRestricted*.bam"), emit: reads_bam_filtered
+        tuple val(meta), path("*regionRestricted*.bai"), emit: reads_bai_filtered
 
     script:
         """
