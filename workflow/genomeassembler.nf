@@ -1,10 +1,4 @@
-// Pipeline to assemble malaria genomes from long-read pacbio data
-
-/* 
-So far, the only input is a path to a samplesheet. There is currently no option to tweak with 
-the settings of the processes (e.g. not able to change the hifiasm settings). Adding support for
-this is a priority.
- */
+// Pipeline to assemble parasite genomes from long-read pacbio data.
 
 // Processes
 include { RUN_FASTQC                                    } from '../processes/run_fastqc'
@@ -20,7 +14,13 @@ include { RUN_QUAST_QC                                  } from '../processes/run
 include { PARSE_SAMPLESHEET                             } from '../subworkflows/parse_samplesheet'
 include { SUBSAMPLE_FASTQ                               } from '../subworkflows/subsample_fastq'
 
-workflow {
+/*
+========================================================================================
+    RUN MAIN WORKFLOW
+========================================================================================
+*/
+
+workflow GENOMEASSEMBLER {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet ) 
     // my_channel = Channel.of( [[sample:'a', reference:'b'] , '/my/path'], [[sample:'c', reference:'d'] , '/my/path2'] )
     // my_channel.map { it[0].reference }.view()

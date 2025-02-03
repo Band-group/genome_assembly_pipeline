@@ -1,5 +1,4 @@
 process PLOT_BREADTH_OF_COVERAGE {
-    tag "$meta.sample_id"
     label "process_medium"
     publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/deeptools_coverage_plot"
 
@@ -11,7 +10,7 @@ process PLOT_BREADTH_OF_COVERAGE {
         path("regionRestricted_coverage.png"), emit: coverage_png
 
     script:
-        def bamPaths = bamTuplesList.collect{ it[1] }.join(' ') // Using Groovy's spread operator to collect the second element of each tuple
+        def bamPaths = bamTuplesList.collect{ it[1] }.join(' ')
         """
         plotCoverage -b ${bamPaths} --BED ${regions_bed} -p ${task.cpus} -o regionRestricted_coverage.png
         """
