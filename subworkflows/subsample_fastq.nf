@@ -7,7 +7,7 @@ include { ALIGN_READS_TO_REF                          } from '../processes/align
 include { BAM_FILTER_ON_REGION                        } from '../processes/R/bam_filter_on_region'
 include { GET_CHROMOSOME_LENGTHS                      } from '../processes/get_chromosome_lengths'
 include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_REGION } from '../processes/compute_coverage'
-include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_ALL    } from '../processes/computer_coverage'
+include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_ALL    } from '../processes/compute_coverage'
 
 workflow SUBSAMPLE_FASTQ {
     take:
@@ -26,7 +26,7 @@ workflow SUBSAMPLE_FASTQ {
         if ( params.use_region ){ // Only run if use_regions is true
             BAM_FILTER_ON_REGION ( ch_bams )
             ch_region_filtered_bams = BAM_FILTER_ON_REGION.out.reads_bam_filtered
-            GET_CHROMOSOME_LENGTHS ( ch_filtered_bams )
+            GET_CHROMOSOME_LENGTHS ( ch_region_filtered_bams )
             ch_region_filtered_bams_cl = GET_CHROMOSOME_LENGTHS.out.chr_lengths // => [ [meta], bam, chr_lengths ]
 
             COMPUTE_COVERAGE_REGION ( ch_region_filtered_bams_cl )

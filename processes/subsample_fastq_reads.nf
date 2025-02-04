@@ -15,13 +15,12 @@ process SUBSAMPLE_FASTQ_READS {
         """
         # Calculate total bases in fastq
         BASES=\$(zcat ${fastq} | paste - - - - | cut -f2 | tr -d '\n' | wc -c)
-
         TARGET_BASES =\$(( ${reference_length} * ${target_depth} ))
     
-        # Pass through fastq file and stop when target coverage is hit
+        # Pass through fastq file and stop when we exceed the target coverage
         zcat ${fastq} | awk -v target=\$TARGET_BASES '
             BEGIN { 
-                total = 0 
+                total = 0
                 rec = ""
             }
             {
@@ -31,11 +30,11 @@ process SUBSAMPLE_FASTQ_READS {
                 }
                 if (NR % 4 == 0) {
                     total += current_length
-                    printf "%s", rec # print record to 
+                    printf "%s", rec # print record to stdout
                     rec = ""
                     if(total >= target) { exit }
                 }
             }
         ' | gzip > ${meta.sample_id}_targetdepth=${target_depth}_subsampled.fastq.gz
         """
-} // In a way, the body of an awk command is a for loop as each record is processed.
+}
