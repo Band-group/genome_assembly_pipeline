@@ -1,4 +1,4 @@
 sample_id,fastq,reference,regions_bed
-s1,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,
-s2,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,
-s3,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,/Users/tomroberts/Documents/Oxford_DPhil/first_rotation/pipeline_devel/fastq1.fq.gz,
+s1,/path/to/fastq,/path/to/reference,
+s2,/path/to/fastq,/path/to/reference,
+s3,/path/to/fastq,/path/to/reference,
