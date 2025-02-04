@@ -21,13 +21,12 @@ include { SUBSAMPLE_FASTQ                               } from '../subworkflows/
 */
 
 workflow GENOMEASSEMBLER {
-    ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet ) 
-    // my_channel = Channel.of( [[sample:'a', reference:'b'] , '/my/path'], [[sample:'c', reference:'d'] , '/my/path2'] )
-    // my_channel.map { it[0].reference }.view()
+    ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet )
     
     // QC
     RUN_FASTQC( ch_fastq )
-    SUBSAMPLE_FASTQ ( ch_fastq, params.regions_bed )
+    SUBSAMPLE_FASTQ ( ch_fastq )
+    
     // Assembly
     // ASSEMBLE_HIFIASM ( ch_fastq )
     // ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs

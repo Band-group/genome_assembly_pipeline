@@ -1,5 +1,5 @@
 def getSubstitutionString(meta){
-	return [ // Each line is a sed script ('s/string_to_replace/new_string/')
+	return [ // Each line is a sed string ('s/string_to_replace/new_string/')
 		"'/Pf3D7_([0-9]+)_v3/${meta.sample_id}_\\1/'", // TO-DO: The strings to replace should not be hardcoded. They depend on the reference fa.
 		"'/PF_apicoplast_genome_1/${meta.sample_id}_apicoplast/'",
 		"'/Pf_M76611/${meta.sample_id}_mitchondrion/'"

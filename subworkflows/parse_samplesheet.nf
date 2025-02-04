@@ -17,7 +17,13 @@ workflow PARSE_SAMPLESHEET {
                 if ( !file(row.reference).exists() ){
                     exit 1, "ERROR: Reference assembly not found: ${row.reference}"
                 }
-                [ [ sample_id:row.sample_id, reference:row.reference ] , row.fastq ]
+                // If 'regions_bed' is empty, set it to null
+                if ( row.regions_bed.trim() == '' ) {
+                    row.regions_bed = null
+                } else if ( !file(row.regions_bed).exists() ){
+                    exit 1, "ERROR: BED file not found: ${row.regions_bed}"
+                }
+                [ [ sample_id:row.sample_id, reference:row.reference, regions_bed:row.regions_bed ] , row.fastq ]
             }
             .set { reads }
 
@@ -27,8 +33,11 @@ workflow PARSE_SAMPLESHEET {
 
 /* 
 Example CSV file:
-sample_id,fastq,reference
-s1,/path/to/file,/path/to/reference
-s2,/path/to/file,/path/to/reference
-s3,/path/to/file,/path/to/reference
-s4,/path/to/file,/path/to/reference */
+sample_id,fastq,reference,regions_bed
+s1,/path/to/file,/path/to/reference,path/to/regions_bed
+s2,/path/to/file,/path/to/reference,path/to/regions_bed
+s3,/path/to/file,/path/to/reference,path/to/regions_bed
+s4,/path/to/file,/path/to/reference,path/to/regions_bed 
+
+regions_bed is not required. If you don't want to calculate coverage statistics for specific regions then either leave the column empty or set it to null.
+*/
