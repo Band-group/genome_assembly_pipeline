@@ -24,7 +24,7 @@ workflow GENOMEASSEMBLER {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet )
     
     // QC
-    RUN_FASTQC( ch_fastq )
+    //RUN_FASTQC( ch_fastq )
     SUBSAMPLE_FASTQ ( ch_fastq )
     
     // Assembly

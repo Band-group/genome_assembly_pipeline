@@ -8,6 +8,7 @@ include { BAM_FILTER_ON_REGION                        } from '../processes/R/bam
 include { GET_CHROMOSOME_LENGTHS                      } from '../processes/get_chromosome_lengths'
 include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_REGION } from '../processes/compute_coverage'
 include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_ALL    } from '../processes/compute_coverage'
+include { PLOT_COVERAGE                               } from '../processes/R/plot_coverage'
 
 workflow SUBSAMPLE_FASTQ {
     take:
@@ -30,11 +31,17 @@ workflow SUBSAMPLE_FASTQ {
             ch_region_filtered_bams_cl = GET_CHROMOSOME_LENGTHS.out.chr_lengths // => [ [meta], bam, chr_lengths ]
 
             COMPUTE_COVERAGE_REGION ( ch_region_filtered_bams_cl )
+            ch_coverage_data = COMPUTE_COVERAGE_REGION.out.coverage_data.collect{ list -> list[1] }
+            ch_coverage_meta = COMPUTE_COVERAGE_REGION.out.coverage_data.collect{ list -> list[0] }
         } else {
             // Add fake regions_bed 
             ch_bams 
                 .map { row -> [ row[0], row[1], [] ] } 
                 .set { ch_fregions_bams } // => [ [meta], bam, empty ]
             COMPUTE_COVERAGE_ALL ( ch_fregions_bams )
+            ch_coverage_data = COMPUTE_COVERAGE_ALL.out.coverage_data.collect{ list -> list[1] }
+            ch_coverage_meta = COMPUTE_COVERAGE_ALL.out.coverage_data.collect{ list -> list[0] }
         }
+        
+        PLOT_COVERAGE ( ch_coverage_meta, ch_coverage_data )
 }

@@ -14,7 +14,6 @@ process SUBSAMPLE_FASTQ_READS {
         def target_depth = "${params.target_depth}"
         """
         # Calculate total bases in fastq
-        BASES=\$(zcat ${fastq} | paste - - - - | cut -f2 | tr -d '\n' | wc -c)
         TARGET_BASES =\$(( ${reference_length} * ${target_depth} ))
     
         # Pass through fastq file and stop when we exceed the target coverage
