@@ -1,7 +1,7 @@
 process COMPUTE_COVERAGE {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/bedtools_genomecov_data"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/bedtools_genomecov_data", mode: "copy"
     
     input:
         tuple val(meta), path(bam)

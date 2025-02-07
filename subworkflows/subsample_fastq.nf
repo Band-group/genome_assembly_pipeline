@@ -1,13 +1,12 @@
 // Subworkflow to subsample fastq files and create breadth of coverage plots
 
 // Processes
-include { GET_REF_LENGTH                              } from '../processes/get_ref_length'
-include { SUBSAMPLE_FASTQ_READS                       } from '../processes/subsample_fastq_reads'
-include { ALIGN_READS_TO_REF                          } from '../processes/align_reads_to_ref'
-include { BAM_FILTER_ON_REGION                        } from '../processes/R/bam_filter_on_region'
-include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_REGION } from '../processes/compute_coverage'
-include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_ALL    } from '../processes/compute_coverage'
-include { PLOT_COVERAGE                               } from '../processes/R/plot_coverage'
+include { GET_REF_LENGTH         } from '../processes/get_ref_length'
+include { SUBSAMPLE_FASTQ_READS  } from '../processes/subsample_fastq_reads'
+include { ALIGN_READS_TO_REF     } from '../processes/align_reads_to_ref'
+include { BAM_FILTER_ON_REGION   } from '../processes/R/bam_filter_on_region'
+include { COMPUTE_COVERAGE       } from '../processes/compute_coverage'
+include { PLOT_COVERAGE          } from '../processes/R/plot_coverage'
 
 workflow SUBSAMPLE_FASTQ {
     take:
@@ -32,5 +31,5 @@ workflow SUBSAMPLE_FASTQ {
         ch_coverage_meta = COMPUTE_COVERAGE.out.coverage_data.collect{ list -> list[0] } // => [sample_id, reference, regions_bed]
         ch_coverage_data = COMPUTE_COVERAGE.out.coverage_data.collect{ list -> list[1] } // => [coverage_bed]
         
-        PLOT_COVERAGE ( ch_coverage_meta, ch_coverage_data, ch_ref_length )
+        PLOT_COVERAGE ( ch_coverage_meta, ch_coverage_data, ch_ref_length.first() )
 }
