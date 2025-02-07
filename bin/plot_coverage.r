@@ -42,14 +42,14 @@ args <- parser$parse_args()
 process_coverage <- function(file, sample_name, regions_bed = NULL, ref_length = NULL) {
     cov <- read.table(file)
     colnames(cov) <- c("chromosome", "depth", "bases", "size", "fraction")
-    if (regions_bed) {
+    if (!is.null(regions_bed)) {
         regions <- read.table(regions_bed)
         diff <- ref_length - max(cumsum(regions$V3 - regions$V2))
         df_coverage <- cov %>%
             filter(chromosome == "genome") %>%
             mutate(bases = ifelse(row_number() == 1, bases - diff, bases)) %>%
-            mutate(depth = depth + 1, fraction = bases / size) %>%
-            reframe(fraction = 1 - cumsum(fraction)) %>%
+            mutate(fraction = bases / size) %>%
+            reframe(depth = depth + 1, fraction = 1 - cumsum(fraction)) %>%
             mutate(fraction = pmax(fraction, 0), sample = sample_name)
     } else {
         df_coverage <- cov %>%
