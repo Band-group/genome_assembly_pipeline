@@ -1,7 +1,7 @@
 process PLOT_COVERAGE {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/plot"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/plot", mode: "copy"
 
     input:
         val(meta)

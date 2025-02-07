@@ -44,11 +44,12 @@ process_coverage <- function(file, sample_name, regions_bed = NULL, ref_length =
     colnames(cov) <- c("chromosome", "depth", "bases", "size", "fraction")
     if (!is.null(regions_bed)) {
         regions <- read.table(regions_bed)
-        diff <- ref_length - max(cumsum(regions$V3 - regions$V2))
+        core_length <- sum(regions$V3 - regions$V2)
+        diff_length <- ref_length - core_length
         df_coverage <- cov %>%
             filter(chromosome == "genome") %>%
-            mutate(bases = ifelse(row_number() == 1, bases - diff, bases)) %>%
-            mutate(fraction = bases / size) %>%
+            mutate(bases = ifelse(row_number() == 1, bases - diff_length, bases)) %>%
+            mutate(fraction = bases / core_length) %>%
             reframe(depth = depth + 1, fraction = 1 - cumsum(fraction)) %>%
             mutate(fraction = pmax(fraction, 0), sample = sample_name)
     } else {
