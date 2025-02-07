@@ -14,11 +14,11 @@ process PLOT_COVERAGE {
     script:
         if ( params.use_region ) {
             """
-            coverage_plot.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data} --regions_bed ${meta.regions_bed} --ref_length ${ref_length}
+            plot_coverage.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data} --regions_bed ${meta.regions_bed[0]} --ref_length ${ref_length}
             """
         } else {
             """
-            coverage_plot.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data}
+            plot_coverage.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data}
             """
         }
         
