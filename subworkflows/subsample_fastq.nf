@@ -5,7 +5,6 @@ include { GET_REF_LENGTH                              } from '../processes/get_r
 include { SUBSAMPLE_FASTQ_READS                       } from '../processes/subsample_fastq_reads'
 include { ALIGN_READS_TO_REF                          } from '../processes/align_reads_to_ref'
 include { BAM_FILTER_ON_REGION                        } from '../processes/R/bam_filter_on_region'
-include { GET_CHROMOSOME_LENGTHS                      } from '../processes/get_chromosome_lengths'
 include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_REGION } from '../processes/compute_coverage'
 include { COMPUTE_COVERAGE as COMPUTE_COVERAGE_ALL    } from '../processes/compute_coverage'
 include { PLOT_COVERAGE                               } from '../processes/R/plot_coverage'
@@ -22,26 +21,16 @@ workflow SUBSAMPLE_FASTQ {
         ch_subsampled_fastq = SUBSAMPLE_FASTQ_READS.out.sub_fastq
         
         ALIGN_READS_TO_REF ( ch_subsampled_fastq )
-        ch_bams = ALIGN_READS_TO_REF.out.aligned_reads_bam
-
         if ( params.use_region ){ // Only run if use_regions is true
-            BAM_FILTER_ON_REGION ( ch_bams )
-            ch_region_filtered_bams = BAM_FILTER_ON_REGION.out.reads_bam_filtered
-            GET_CHROMOSOME_LENGTHS ( ch_region_filtered_bams )
-            ch_region_filtered_bams_cl = GET_CHROMOSOME_LENGTHS.out.chr_lengths // => [ [meta], bam, chr_lengths ]
-
-            COMPUTE_COVERAGE_REGION ( ch_region_filtered_bams_cl )
-            ch_coverage_data = COMPUTE_COVERAGE_REGION.out.coverage_data.collect{ list -> list[1] }
-            ch_coverage_meta = COMPUTE_COVERAGE_REGION.out.coverage_data.collect{ list -> list[0] }
+            BAM_FILTER_ON_REGION ( ALIGN_READS_TO_REF.out.aligned_reads_bam )
+            ch_bams = BAM_FILTER_ON_REGION.out.reads_bam_filtered
         } else {
-            // Add fake regions_bed 
-            ch_bams 
-                .map { row -> [ row[0], row[1], [] ] } 
-                .set { ch_fregions_bams } // => [ [meta], bam, empty ]
-            COMPUTE_COVERAGE_ALL ( ch_fregions_bams )
-            ch_coverage_data = COMPUTE_COVERAGE_ALL.out.coverage_data.collect{ list -> list[1] }
-            ch_coverage_meta = COMPUTE_COVERAGE_ALL.out.coverage_data.collect{ list -> list[0] }
+            ch_bams = ALIGN_READS_TO_REF.out.aligned_reads_bam
         }
+
+        COMPUTE_COVERAGE ( ch_bams )
+        ch_coverage_meta = COMPUTE_COVERAGE.out.coverage_data.collect{ list -> list[0] } // => [sample_id, reference, regions_bed]
+        ch_coverage_data = COMPUTE_COVERAGE.out.coverage_data.collect{ list -> list[1] } // => [coverage_bed]
         
-        PLOT_COVERAGE ( ch_coverage_meta, ch_coverage_data )
+        PLOT_COVERAGE ( ch_coverage_meta, ch_coverage_data, ch_ref_length )
 }

@@ -6,12 +6,20 @@ process PLOT_COVERAGE {
     input:
         val(meta)
         path(coverage_data)
+        val(ref_length)
 
     output:
         path("coverage_plot.pdf"), emit: coverage_plot
     
     script:
-        """
-        coverage_plot.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data}
-        """
+        if ( params.use_region ) {
+            """
+            coverage_plot.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data} --regions_bed ${meta.regions_bed} --ref_length ${ref_length}
+            """
+        } else {
+            """
+            coverage_plot.r --outdir ./ --sample_names ${meta.sample_id} --coverage_files ${coverage_data}
+            """
+        }
+        
 }

@@ -11,6 +11,6 @@ process GET_CHROMOSOME_LENGTHS {
 
     script:
         """
-        awk '{sum[\$1]+=\$3-\$2} END {for (chrom in sum) print chrom, sum[chrom]}' ${regions_bed} > chromosome_lengths.txt
+        awk 'BEGIN {OFS = "\t"} {sum[\$1]+=\$3-\$2} END {for (chrom in sum) print chrom, sum[chrom]}' ${meta.regions_bed} > chromosome_lengths.txt
         """
 }
