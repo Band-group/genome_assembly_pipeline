@@ -49,7 +49,7 @@ process_coverage <- function(file, sample_name, regions_bed = NULL, ref_length =
         df_coverage <- cov %>%
             filter(chromosome == "genome") %>%
             mutate(bases = ifelse(row_number() == 1, bases - diff_length, bases)) %>%
-            mutate(fraction = bases / core_length) %>%
+            mutate(fraction = bases / core_length) %>% # compute fraction using the region restricted length
             reframe(depth = depth + 1, fraction = 1 - cumsum(fraction)) %>%
             mutate(fraction = pmax(fraction, 0), sample = sample_name)
     } else {

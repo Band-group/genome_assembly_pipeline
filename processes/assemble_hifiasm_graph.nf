@@ -1,7 +1,7 @@
 process ASSEMBLE_HIFIASM {
     tag "$meta.sample_id"
     label "process_medium"
-    publishDir "${params.outdir}/results/01_HIFIASM_ASSEMBLIES/${meta.sample_id}_nhaps${params.hifiasm_n_hap}_purgelvl${params.hifiasm_purge_dup_lvl}_D${params.hifiasm_d}_N${params.hifiasm_n}", mode: "copy"
+    publishDir "${params.outdir}/results/02_ASSEMBLIES/hifiasm/${meta.sample_id}_nhaps${params.hifiasm_n_hap}_purgelvl${params.hifiasm_purge_dup_lvl}_D${params.hifiasm_d}_N${params.hifiasm_n}", mode: "copy"
 
     input:
         tuple val(meta), path(fastq) // [ sample_id, fastq ]
