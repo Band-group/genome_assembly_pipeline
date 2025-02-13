@@ -35,9 +35,9 @@ workflow GENOMEASSEMBLER {
     ASSEMBLE_HIFIASM ( ch_fastq )
     ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
 
-    ch_graph_fastq = ch_primary_contigs 
-        .join( ch_fastq, by: 0 ) // => [ [sample_id, reference], assembly_graph, fastq ]
-    ALIGN_READS_TO_GFA ( ch_graph_fastq )
+    //ch_graph_fastq = ch_primary_contigs 
+    //    .join( ch_fastq, by: 0 ) // => [ [sample_id, reference], assembly_graph, fastq ]
+    //ALIGN_READS_TO_GFA ( ch_graph_fastq )
 
     //CREATE_FA_FROM_GFA ( ch_primary_contigs )
     //ch_primary_fasta = CREATE_FA_FROM_GFA.out.contig_fa // => [ [sample_id, reference], contig_fa ]
