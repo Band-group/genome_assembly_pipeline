@@ -7,8 +7,8 @@ process BAM_FILTER_ON_REGION {
         tuple val(meta), path(bam) // reads_bam is the downsampled bam file
 
     output:
-        tuple val(meta), path("*regionRestricted*.bam"), emit: reads_bam_filtered
-        tuple val(meta), path("*regionRestricted*.bai"), emit: reads_bai_filtered
+        tuple val(meta), path("*regionRestricted*.bam"), emit: aligned_reads_bam_filtered
+        tuple val(meta), path("*regionRestricted*.bai"), emit: aligned_reads_bai_filtered
 
     script:
         """

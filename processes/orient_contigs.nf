@@ -11,6 +11,8 @@ process ORIENT_CONTIGS {
 	label "process_single"
     publishDir "${params.outdir}/results/04_ORIENTED_CONTIGS/", mode: "copy"
 
+	// requires iorek to be in path
+
     input:
 		tuple val(meta), path(assembly_fasta), path(assembly_bam)
 

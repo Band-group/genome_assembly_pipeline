@@ -3,7 +3,7 @@ process ASSEMBLE_HIFIASM {
     label "process_medium"
     publishDir "${params.outdir}/results/02_ASSEMBLIES/hifiasm/${meta.sample_id}_nhaps${params.hifiasm_n_hap}_purgelvl${params.hifiasm_purge_dup_lvl}_D${params.hifiasm_d}_N${params.hifiasm_n}", mode: "copy"
 
-    container "hifiasm:0.24.0--8d78d9b82cf20802" // using oras
+    container "oras://community.wave.seqera.io/library/hifiasm:0.24.0--8d78d9b82cf20802" // singularity
     // container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
     //     ? 'https://depot.galaxyproject.org/singularity/hifiasm%3A0.24.0--h5ca1c30_0'
     //     : 'biocontainers/hifiasm:0.24.0--h5ca1c30_0'}"

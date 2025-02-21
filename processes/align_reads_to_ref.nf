@@ -3,6 +3,8 @@ process ALIGN_READS_TO_REF {
     label "process_low"
     publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/reads2ref", mode: "copy"
 
+    container "oras://community.wave.seqera.io/library/minimap2_samtools:564e363a70ace2ad" // singularity
+
     input:
         tuple val(meta), path(fastq)
 

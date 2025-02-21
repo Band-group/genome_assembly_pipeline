@@ -5,6 +5,8 @@ process RUN_QUAST_QC {
     label "process_low"
     publishDir "${params.outdir}/results/06_QUAST_QC/", mode: "copy"
 
+    container "oras://community.wave.seqera.io/library/quast:5.3.0--bfd4c029fde7e696" // singularity
+
     input:
         tuple val(meta), path(assembly_fasta)
 

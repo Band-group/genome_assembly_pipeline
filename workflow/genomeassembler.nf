@@ -13,7 +13,7 @@ include { RUN_QUAST_QC                                  } from '../processes/run
 
 // Subworkflows
 include { PARSE_SAMPLESHEET                             } from '../subworkflows/parse_samplesheet'
-include { SUBSAMPLE_FASTQ                               } from '../subworkflows/subsample_fastq'
+include { SUBSAMPLE_BAM                                 } from '../subworkflows/subsample_bam'
 include { SCAFFOLD                                      } from '../subworkflows/scaffold'
 
 /*
@@ -28,34 +28,36 @@ workflow GENOMEASSEMBLER {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet )
     
     // QC
-    //RUN_FASTQC( ch_fastq )
-    //SUBSAMPLE_FASTQ ( ch_fastq )
+    RUN_FASTQC( ch_fastq )
+    SUBSAMPLE_BAM ( ch_fastq )
     
     // Assembly
     ASSEMBLE_HIFIASM ( ch_fastq )
     ch_primary_contigs = ASSEMBLE_HIFIASM.out.primary_contigs
 
-    //ch_graph_fastq = ch_primary_contigs 
-    //    .join( ch_fastq, by: 0 ) // => [ [sample_id, reference], assembly_graph, fastq ]
+    ch_graph_fastq = ch_primary_contigs 
+        .join( ch_fastq, by: 0 ) // => [ [sample_id, reference], assembly_graph, fastq ]
     //ALIGN_READS_TO_GFA ( ch_graph_fastq )
 
-    //CREATE_FA_FROM_GFA ( ch_primary_contigs )
-    //ch_primary_fasta = CREATE_FA_FROM_GFA.out.contig_fa // => [ [sample_id, reference], contig_fa ]
+    CREATE_FA_FROM_GFA ( ch_primary_contigs )
+    ch_primary_fasta = CREATE_FA_FROM_GFA.out.contig_fa // => [ [sample_id, reference], contig_fa ]
 
-    //ALIGN_FA_TO_REF_UNORIENTED ( ch_primary_fasta )
-    //ch_primary_bam = ALIGN_FA_TO_REF_UNORIENTED.out.aligned_fa_bam // => [ [sample_id, reference], contig_bam ]
+    ALIGN_FA_TO_REF_UNORIENTED ( ch_primary_fasta )
+    ch_primary_bam = ALIGN_FA_TO_REF_UNORIENTED.out.aligned_fa_bam // => [ [sample_id, reference], contig_bam ]
 
     // Join fasta and bam channels to ensure consistent order 
-    //ch_fasta_bam = ch_primary_fasta
-    //    .join( ch_primary_bam, by: 0 ) // => [ meta, fasta, bam ]
+    ch_fasta_bam = ch_primary_fasta
+        .join( ch_primary_bam, by: 0 ) // => [ meta, fasta, bam ]
 
-    //ORIENT_CONTIGS ( ch_fasta_bam )
-    //ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa
+    ORIENT_CONTIGS ( ch_fasta_bam )
+    ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa
+    ch_oriented_ctgs_meta_all = ORIENT_CONTIGS.out.oriented_fa.collect{ list -> list[0] } // => [sample_id, reference, regions_bed]
+    ch_oriented_ctgs_data_all = ORIENT_CONTIGS.out.oriented_fa.collect{ list -> list[1] } // => [oriented_fasta]
 
     //SCAFFOLD ( ch_oriented_ctgs ) // subworkflow => correct and scaffold contigs using RagTag
     
-    //ALIGN_FA_TO_REF_ORIENTED ( ch_oriented_ctgs )
-    //RUN_QUAST_QC ( ch_oriented_ctgs )
+    ALIGN_FA_TO_REF_ORIENTED ( ch_oriented_ctgs )
+    RUN_QUAST_QC ( ch_oriented_ctgs )
 }
 
 

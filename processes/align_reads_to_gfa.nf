@@ -1,7 +1,9 @@
 process ALIGN_READS_TO_GFA {
     tag "$meta.sample_id"
-    label "process_low"
+    label "process_high"
     publishDir "${params.outdir}/results/02_ASSEMBLIES/reads2gfa/${meta.sample_id}", mode: "copy"
+
+    container "oras://community.wave.seqera.io/library/graphaligner:1.0.20--3fb1e479806451c9" // singularity
 
     input:
         tuple val(meta), path(assembly_graph), path(fastq) // => [ meta, primary contigs, fastq reads ]
