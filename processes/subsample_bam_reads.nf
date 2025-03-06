@@ -1,6 +1,6 @@
 // Subsample a bam file to a target depth, discarding secondary alignments.
 
-process SUBSAMPLE_ALIGNED_BAMS {
+process SUBSAMPLE_BAM_READS {
     tag "$meta.sample_id"
     label "process_single"
     publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/subsampled_bams", mode: "copy"
@@ -12,14 +12,17 @@ process SUBSAMPLE_ALIGNED_BAMS {
         val(reference_length)
 
     output:
-        tuple val(meta), path("${meta.sample_id}_targetdepth=${params.target_depth}_subsampled.bam"), emit: sub_bam
+        tuple val(meta), path("${meta.sample_id}_targetdepth_${params.target_depth}_subsampled.bam"), emit: sub_bam
 
     script:
         def target_depth = "${params.target_depth}"
         """
         TARGET_BASES=\$(( ${reference_length} * ${target_depth} ))
         
-        samtools view -h -F 260 ${aligned_reads} | awk -v target=\$TARGET_BASES '
+        {
+            samtools view -H ${aligned_reads};
+            samtools view -F 260 ${aligned_reads} | shuf;
+        } | awk -v target=\$TARGET_BASES '
             BEGIN { total = 0 }
             /^@/ { print; next } # print header lines
             {

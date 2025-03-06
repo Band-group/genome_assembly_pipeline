@@ -3,6 +3,8 @@ process CREATE_FA_FROM_GFA {
     label "process_single"
     publishDir "${params.outdir}/results/02_FASTA/", mode: "copy"
 
+    container "oras://community.wave.seqera.io/library/gfatools_samtools:3251264bda7675f9" // singularity
+
     input: 
         tuple val(meta), path(assembly_graph)
 

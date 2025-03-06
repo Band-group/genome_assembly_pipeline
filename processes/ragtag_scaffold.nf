@@ -3,9 +3,7 @@ process RAGTAG_SCAFFOLD {
     label "process_single"
     publishDir "${params.outdir}/results/02_ASSEMBLIES/scaffolding/ragtag_scaffold/${meta.sample_id}", mode: "copy"
 
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://depot.galaxyproject.org/singularity/ragtag:2.1.0--pyhb7b1952_0'
-        : 'biocontainers/ragtag:2.1.0--pyhb7b1952_0'}"
+    container "oras://community.wave.seqera.io/library/minimap2_ragtag:5ad34249839dbbbc" // reuse container from ragtag_correct
 
     input:
         tuple val(meta), path(corrected_fasta) // output from orient_contigs
