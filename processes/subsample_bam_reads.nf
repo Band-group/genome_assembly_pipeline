@@ -3,7 +3,7 @@
 process SUBSAMPLE_BAM_READS {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/subsampled_bams", mode: "copy"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/subsampled_bams/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/samtools:1.21--84c9d77c3901e90b" // singularity
 

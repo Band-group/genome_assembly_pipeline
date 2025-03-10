@@ -1,7 +1,7 @@
 process PLOT_COVERAGE {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/plot", mode: "copy"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/coverage_plot", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/r-argparse_r-dplyr_r-ggplot2:4c31e454ced817ad" // singularity
 

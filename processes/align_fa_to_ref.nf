@@ -17,5 +17,11 @@ process ALIGN_FA_TO_REF {
         minimap2 -x ${asm_preset} -a ${meta.reference} ${assembly_fasta} > ${meta.sample_id}.sam
 		samtools sort -o ${meta.sample_id}_sorted.bam ${meta.sample_id}.sam
 		samtools index ${meta.sample_id}_sorted.bam
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            minimap2: \$(minimap2 --version 2>&1)
+            samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        END_VERSIONS
         """
 }

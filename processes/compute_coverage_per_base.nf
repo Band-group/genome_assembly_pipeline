@@ -1,7 +1,7 @@
-process COMPUTE_COVERAGE {
+process COMPUTE_COVERAGE_PER_BASE {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/bedtools_genomecov/${meta.sample_id}", mode: "copy"
+    publishDir "${params.outdir}/results/02_CONTIG_ADJUSTMENT/bedtools_genomecov/${meta.sample_id}", mode: "copy"
     
     input:
         tuple val(meta), path(bam)
@@ -11,6 +11,6 @@ process COMPUTE_COVERAGE {
     
     script:
         """
-        bedtools genomecov -ibam ${bam} > ${meta.sample_id}_genomecov_coverage.txt
+        bedtools genomecov -ibam ${bam} -d > ${meta.sample_id}_genomecov_coverage.txt
         """
 }

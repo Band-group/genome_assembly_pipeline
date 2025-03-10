@@ -9,6 +9,9 @@ include { CREATE_FA_FROM_GFA                            } from '../processes/cre
 include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_UNORIENTED } from '../processes/align_fa_to_ref'
 include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_ORIENTED   } from '../processes/align_fa_to_ref'
 include { ORIENT_CONTIGS                                } from '../processes/orient_contigs'
+include { ALIGN_READS_TO_CONTIGS                        } from '../processes/align_reads_to_contigs'
+include { COMPUTE_COVERAGE_PER_BASE                     } from '../processes/compute_coverage_per_base'
+include { COMPUTE_COV_ZSCORES                           } from '../processes/compute_cov_zscores'
 include { RUN_QUAST_QC                                  } from '../processes/run_quast_qc'
 
 // Subworkflows
@@ -28,7 +31,7 @@ workflow GENOMEASSEMBLER {
     ch_fastq = PARSE_SAMPLESHEET ( params.samplesheet )
     
     // QC
-    RUN_FASTQC( ch_fastq )
+    RUN_FASTQC ( ch_fastq )
     SUBSAMPLE_BAM ( ch_fastq )
     
     // Assembly
@@ -50,30 +53,22 @@ workflow GENOMEASSEMBLER {
         .join( ch_primary_bam, by: 0 ) // => [ meta, fasta, bam ]
 
     ORIENT_CONTIGS ( ch_fasta_bam )
-    ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa
+    ch_oriented_ctgs = ORIENT_CONTIGS.out.oriented_fa // => [ meta, oriented_fasta ]
     ch_oriented_ctgs_meta_all = ORIENT_CONTIGS.out.oriented_fa.collect{ list -> list[0] } // => [sample_id, reference, regions_bed]
     ch_oriented_ctgs_data_all = ORIENT_CONTIGS.out.oriented_fa.collect{ list -> list[1] } // => [oriented_fasta]
 
-    //SCAFFOLD ( ch_oriented_ctgs ) // subworkflow => correct and scaffold contigs using RagTag
+    ch_oriented_ctgs_reads = ch_oriented_ctgs
+        .join ( ch_fastq, by: 0 ) // => [ meta, oriented_fasta, fastq ]
+    
+    // TO-DO: below should be moved into a subworkflow
+    // Align reads back to oriented contigs
+    ALIGN_READS_TO_CONTIGS ( ch_oriented_ctgs_reads )
+    ch_ctgs_reads_bam = ALIGN_READS_TO_CONTIGS.out.aligned_reads_bam
+    // Compute per-base coverage and calculate window z-scores
+    COMPUTE_COVERAGE_PER_BASE ( ch_ctgs_reads_bam )
+    ch_perbase_cov = COMPUTE_COVERAGE_PER_BASE.out.coverage_data
+    COMPUTE_COV_ZSCORES ( ch_perbase_cov )
     
     ALIGN_FA_TO_REF_ORIENTED ( ch_oriented_ctgs )
     RUN_QUAST_QC ( ch_oriented_ctgs )
 }
-
-
-// workflow.onComplete {
-//     // Create pipeline results directory
-//     file("${params.outdir}/results/pipeline_summary").mkdirs()
-
-//     // Write summary file
-//     def summaryFile = new File("${params.outdir}/results/pipeline_summary/pipeline_summary.txt")
-//     summaryFile.text = """
-//         Pipeline finished successfully!
-//         Nextflow version: ${nextflow.version}
-//         Run time: ${workflow.duration}
-//         Run name: ${workflow.runName}
-//         Command line arguments: ${workflow.args.join(' ')}
-//         Parameters:
-//         ${params.inspect()}
-//         """
-// }

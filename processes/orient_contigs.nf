@@ -9,7 +9,7 @@ def getSubstitutionString(meta){
 process ORIENT_CONTIGS {
 	tag "$meta.sample_id"
 	label "process_single"
-    publishDir "${params.outdir}/results/04_ORIENTED_CONTIGS/", mode: "copy"
+    publishDir "${params.outdir}/results/02_ASSEMBLIES/oriented_contigs_fa/${meta.sample_id}", mode: "copy"
 
 	// requires iorek to be in path
 

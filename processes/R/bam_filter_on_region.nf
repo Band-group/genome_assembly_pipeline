@@ -1,7 +1,7 @@
 process BAM_FILTER_ON_REGION {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/reads2ref_region_restricted", mode: "copy"
+    publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/reads2ref_region_restricted/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/bioconductor-genomicalignments_bioconductor-genomicranges_bioconductor-rsamtools_bioconductor-rtracklayer_r-argparse:b3bf752c05aefd1d"
 

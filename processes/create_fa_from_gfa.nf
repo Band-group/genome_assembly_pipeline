@@ -1,7 +1,7 @@
 process CREATE_FA_FROM_GFA {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/02_FASTA/", mode: "copy"
+    publishDir "${params.outdir}/results/01_ASSEMBLIES/fa_from_gfa/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/gfatools_samtools:3251264bda7675f9" // singularity
 
