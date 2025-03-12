@@ -122,7 +122,7 @@ merge_high_zscore_regions <- function(high_zscore_windows){
           current_zscores <- c(current_zscores, contig_windows$z_score[i])
         } else {
           # Save region and start new one
-          merged_regions <- rbind(merged_regions, data.frame(
+          res <- rbind(res, data.frame(
             contig = curr_contig,
             start = current_start,
             end = current_end,
@@ -153,7 +153,7 @@ merged_regions <- merge_high_zscore_regions(high_zscore_windows)
 # Convert to BED format (0-based start coordinate)
 bed_regions <- merged_regions %>%
   mutate(start = start - 1) %>%  # Convert to 0-based coordinates for BED format
-  select(contig, start, end, mean_zscore)
+  select(contig, start, end)
 
 # Write BED file
 output_file <- file.path(args$outdir, "high_zscore_regions.bed")
