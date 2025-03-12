@@ -1,7 +1,7 @@
 process COMPUTE_COV_ZSCORES {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/03_CONTIG_ADJUSTMENT/bedtools_genomecov_zscores/${meta.sample_id}", mode: "copy"
+    publishDir "${params.outdir}/results/03_CONTIG_CORRECTION/bedtools_genomecov_zscores/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/r-argparse_r-dplyr_r-ggplot2:4c31e454ced817ad" // singularity
 
@@ -13,6 +13,6 @@ process COMPUTE_COV_ZSCORES {
     
     script:
         """
-        compute_cov_zscores.r --coverage_file ${coverage_data} --outdir ./
+        compute_cov_zscores.r --coverage_file ${coverage_data} --zscore_threshold 3.0 --outdir ./
         """
 }

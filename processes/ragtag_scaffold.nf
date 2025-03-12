@@ -1,7 +1,7 @@
 process RAGTAG_SCAFFOLD {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/02_ASSEMBLIES/scaffolding/ragtag_scaffold/${meta.sample_id}", mode: "copy"
+    publishDir "${params.outdir}/results/02_CONTIG_CORRECTION/ragtag_scaffold/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/minimap2_ragtag:5ad34249839dbbbc" // reuse container from ragtag_correct
 

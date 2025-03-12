@@ -11,6 +11,11 @@ parser$add_argument("--coverage_file",
                     help = "Per base coverage data produced by bedtools genomecov",
                     required = TRUE)
 
+parser$add_argument("--zscore_threshold",
+                    type = "double",
+                    help = "Threshold for labelling a window as abnormal coverage",
+                    required = TRUE)
+
 parser$add_argument("--outdir",
                     type = "character",
                     help = "Output directory for zscore regions file",
@@ -76,61 +81,74 @@ high_zscore_windows <- all_windows %>%
   filter(abs(z_score) > zscore_threshold) %>%
   arrange(contig, window_start)
 
-# Merge contiguous windows into regions
-merged_regions <- data.frame(
-  contig = character(),
-  start = numeric(),
-  end = numeric(),
-  mean_zscore = numeric(),
-  stringsAsFactors = FALSE
-)
-
-# Process each contig separately
-for (curr_contig in unique(high_zscore_windows$contig)) {
-  contig_windows <- high_zscore_windows %>% 
-    filter(contig == curr_contig) %>% 
-    arrange(window_start)
+merge_high_zscore_regions <- function(high_zscore_windows){
+  # Initialise df
+  res <- data.frame(
+    contig = character(),
+    start = numeric(),
+    end = numeric(),
+    mean_zscore = numeric(),
+    stringsAsFactors = FALSE
+  )
   
-  if (nrow(contig_windows) > 0) {
-    # Initialize with first window
-    current_start <- contig_windows$window_start[1]
-    current_end <- contig_windows$window_end[1]
-    current_zscores <- contig_windows$z_score[1]
+  for (curr_contig in unique(high_zscore_windows$contig)) {
+    contig_windows <- high_zscore_windows %>%
+      filter(contig == curr_contig) %>%
+      arrange(window_start)
     
-    # Process remaining windows
-    for (i in 2:nrow(contig_windows)) {
-      # Check if this window is contiguous with current region
-      if (contig_windows$window_start[i] <= current_end + 1) {
-        # Extend current region
-        current_end <- contig_windows$window_end[i]
-        current_zscores <- c(current_zscores, contig_windows$z_score[i])
-      } else {
-        # Save current region and start a new one
-        merged_regions <- rbind(merged_regions, data.frame(
-          contig = curr_contig,
-          start = current_start,
-          end = current_end,
-          mean_zscore = mean(current_zscores),
-          stringsAsFactors = FALSE
-        ))
-        
-        # Start new region
-        current_start <- contig_windows$window_start[i]
-        current_end <- contig_windows$window_end[i]
-        current_zscores <- contig_windows$z_score[i]
-      }
+    # Case where a contig has a single, high zscore window
+    if (nrow(contig_windows) == 1){
+      res <- rbind(res, data.frame(
+        contig = curr_contig,
+        start = contig_windows$window_start[1],
+        end = contig_windows$window_end[1],
+        mean_zscore = contig_windows$z_score[1],
+        stringsAsFactors = FALSE
+      ))
+      next
     }
     
-    # Add the last region
-    merged_regions <- rbind(merged_regions, data.frame(
-      contig = curr_contig,
-      start = current_start,
-      end = current_end,
-      mean_zscore = mean(current_zscores),
-      stringsAsFactors = FALSE
-    ))
+    # Case where a contig has mulitple, high zscore windows
+    if (nrow(contig_windows) > 1) {
+      # Initialise with first window
+      current_start <- contig_windows$window_start[1]
+      current_end <- contig_windows$window_end[1]
+      current_zscores <- contig_windows$z_score[1]
+      for (i in 2:nrow(contig_windows)) {
+        # Check if this window is contiguous with current region
+        if (contig_windows$window_start[i] <= current_end + 1) {
+          # Extend region
+          current_end <- contig_windows$window_end[i]
+          current_zscores <- c(current_zscores, contig_windows$z_score[i])
+        } else {
+          # Save region and start new one
+          merged_regions <- rbind(merged_regions, data.frame(
+            contig = curr_contig,
+            start = current_start,
+            end = current_end,
+            mean_zscore = mean(current_zscores),
+            stringsAsFactors = FALSE
+          ))
+          
+          current_start <- contig_windows$window_start[i]
+          current_end <- contig_windows$window_end[i]
+          current_zscores <- contig_windows$z_score[i]
+        }
+      }
+      # Add the last region
+      res <- rbind(res, data.frame(
+        contig = curr_contig,
+        start = current_start,
+        end = current_end,
+        mean_zscore = mean(current_zscores),
+        stringsAsFactors = FALSE
+      ))
+    }
   }
+  return(res)
 }
+
+merged_regions <- merge_high_zscore_regions(high_zscore_windows)
 
 # Convert to BED format (0-based start coordinate)
 bed_regions <- merged_regions %>%

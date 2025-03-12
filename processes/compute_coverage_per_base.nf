@@ -1,7 +1,7 @@
 process COMPUTE_COVERAGE_PER_BASE {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/02_CONTIG_ADJUSTMENT/bedtools_genomecov/${meta.sample_id}", mode: "copy"
+    publishDir "${params.outdir}/results/03_CONTIG_CORRECTION/bedtools_genomecov/${meta.sample_id}", mode: "copy"
     
     container "oras://community.wave.seqera.io/library/bedtools:2.31.1--a120a7e98287539a"
 

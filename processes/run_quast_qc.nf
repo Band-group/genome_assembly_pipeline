@@ -3,7 +3,7 @@
 process RUN_QUAST_QC {
     tag "$meta.sample_id"
     label "process_low"
-    publishDir "${params.outdir}/results/06_QUAST_QC/", mode: "copy"
+    publishDir "${params.outdir}/results/04_FINAL_QC/quast_qc/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/quast:5.3.0--bfd4c029fde7e696" // singularity
 

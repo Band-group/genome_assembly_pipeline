@@ -1,7 +1,7 @@
 process RAGTAG_CORRECT {
     tag "$meta.sample_id"
     label "process_single"
-    publishDir "${params.outdir}/results/03_CONTIG_ADJUSTMENT/ragtag_correct/${meta.sample_id}", mode: "copy"
+    publishDir "${params.outdir}/results/03_CONTIG_CORRECTION/ragtag_correct/${meta.sample_id}", mode: "copy"
 
     container "oras://community.wave.seqera.io/library/minimap2_ragtag:5ad34249839dbbbc"
 
