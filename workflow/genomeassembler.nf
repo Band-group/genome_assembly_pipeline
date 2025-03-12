@@ -11,7 +11,7 @@ include { ALIGN_FA_TO_REF as ALIGN_FA_TO_REF_ORIENTED   } from '../processes/ali
 include { ORIENT_CONTIGS                                } from '../processes/orient_contigs'
 include { ALIGN_READS_TO_CONTIGS                        } from '../processes/align_reads_to_contigs'
 include { COMPUTE_COVERAGE_PER_BASE                     } from '../processes/compute_coverage_per_base'
-include { COMPUTE_COV_ZSCORES                           } from '../processes/compute_cov_zscores'
+include { COMPUTE_COV_ZSCORES                           } from '../processes/R/compute_cov_zscores'
 include { RUN_QUAST_QC                                  } from '../processes/run_quast_qc'
 
 // Subworkflows

@@ -64,7 +64,7 @@ calc_sliding_windows <- function(per_base_coverage_stats, contig_stats, contig_n
 contig_names <- unique(data$V1)
 all_windows <- data.frame()
 for (name in contig_names) {
-  cat("Processing contig:", contig, "\n")
+  cat("Processing contig:", name, "\n")
   contig_windows <- calc_sliding_windows(per_base_coverage_stats = data, contig_stats = contig_stats, contig_name = name)
   all_windows <- rbind(all_windows, contig_windows)
 }
@@ -87,7 +87,9 @@ merged_regions <- data.frame(
 
 # Process each contig separately
 for (curr_contig in unique(high_zscore_windows$contig)) {
-  contig_windows <- high_zscore_windows %>% filter(contig == curr_contig) %>% arrange(window_start)
+  contig_windows <- high_zscore_windows %>% 
+    filter(contig == curr_contig) %>% 
+    arrange(window_start)
   
   if (nrow(contig_windows) > 0) {
     # Initialize with first window

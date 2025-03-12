@@ -3,6 +3,8 @@ process COMPUTE_COVERAGE {
     label "process_single"
     publishDir "${params.outdir}/results/01_FASTQ_QC_REPORTS/coverage/bedtools_genomecov/${meta.sample_id}", mode: "copy"
     
+    container "oras://community.wave.seqera.io/library/bedtools:2.31.1--a120a7e98287539a"
+
     input:
         tuple val(meta), path(bam)
 
