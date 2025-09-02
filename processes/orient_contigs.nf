@@ -19,6 +19,7 @@ process ORIENT_CONTIGS {
     output: 
         tuple val(meta), path("${meta.sample_id}_oriented.fa.gz"), emit: oriented_fa
 		tuple val(meta), path("*.fai"), emit: oriented_fai
+		path("versions.yml"), emit: versions
 
     script:
 		def substitution = getSubstitutionString(meta)
@@ -31,5 +32,10 @@ process ORIENT_CONTIGS {
 
 		bgzip ${meta.sample_id}_oriented.fa
 		samtools faidx ${meta.sample_id}_oriented.fa.gz
+
+		cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        END_VERSIONS
         """
 }

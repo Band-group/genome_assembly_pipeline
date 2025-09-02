@@ -10,9 +10,15 @@ process COMPUTE_COVERAGE_PER_BASE {
 
     output:
         tuple val(meta), path("${meta.sample_id}_genomecov_coverage.txt"), emit: coverage_data
+        path("versions.yml"), emit: versions
     
     script:
         """
         bedtools genomecov -ibam ${bam} -d > ${meta.sample_id}_genomecov_coverage.txt
+        
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            bedtools: \$(bedtools --version 2>&1)
+        END_VERSIONS
         """
 }

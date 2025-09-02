@@ -10,6 +10,7 @@ process ALIGN_FA_TO_REF {
     output:
         tuple val(meta), path("${meta.sample_id}_sorted.bam"), emit: aligned_fa_bam
         tuple val(meta), path("*.bai"), emit: aligned_fa_bai
+        path("versions.yml"), emit: versions
 
     script:
         def asm_preset = "${params.minimap_asm}"

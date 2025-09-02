@@ -10,9 +10,15 @@ process RUN_FASTQC {
 
     output:
         path("*_fastqc.*"), emit: fastqc_report
+        path("versions.yml"), emit: versions
 
     script:
         """
         fastqc ${fastq}
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            fastqc: \$(fastqc --version 2>&1)
+        END_VERSIONS
         """
 }

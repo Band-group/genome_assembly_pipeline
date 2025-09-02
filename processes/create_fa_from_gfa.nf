@@ -10,10 +10,16 @@ process CREATE_FA_FROM_GFA {
 
     output:
         tuple val(meta), path("${meta.sample_id}.primary_contigs.fa.gz"), emit: contig_fa
+        path("versions.yml"), emit: versions
     
     script:
         """
         gfatools gfa2fa ${assembly_graph} > ${meta.sample_id}.primary_contigs.fa
         bgzip ${meta.sample_id}.primary_contigs.fa
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            gfatools: \$(gfatools version 2>&1)
+        END_VERSIONS
         """
 }

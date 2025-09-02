@@ -13,6 +13,7 @@ process SUBSAMPLE_BAM_READS {
 
     output:
         tuple val(meta), path("${meta.sample_id}_targetdepth_${params.target_depth}_subsampled.bam"), emit: sub_bam
+        path("versions.yml"), emit: versions
 
     script:
         def target_depth = "${params.target_depth}"
@@ -34,5 +35,10 @@ process SUBSAMPLE_BAM_READS {
                 if(total >= target) { exit }
             }
         ' | samtools view -b > ${meta.sample_id}_targetdepth_${target_depth}_subsampled.bam
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        END_VERSIONS
         """
 }

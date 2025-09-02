@@ -12,6 +12,7 @@ process RUN_QUAST_QC {
 
     output:
         path("${meta.sample_id}_quast/*"), emit: quast_results
+        path("versions.yml"), emit: versions
 
     script:
         """
@@ -20,5 +21,10 @@ process RUN_QUAST_QC {
             -o ${meta.sample_id}_quast \\
             -r ${meta.reference} \\
             -t ${task.cpus}
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            quast: \$(quast --version 2>&1)
+        END_VERSIONS
         """
 }

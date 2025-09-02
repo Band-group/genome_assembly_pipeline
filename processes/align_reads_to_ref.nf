@@ -11,6 +11,7 @@ process ALIGN_READS_TO_REF {
     output:
         tuple val(meta), path("${meta.sample_id}_reads2ref_sorted.bam"), emit: aligned_reads_bam
         tuple val(meta), path("*.bai"), emit: aligned_reads_bai
+        path("versions.yml"), emit: versions
 
     script:
         """

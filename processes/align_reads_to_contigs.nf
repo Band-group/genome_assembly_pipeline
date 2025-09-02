@@ -11,6 +11,7 @@ process ALIGN_READS_TO_CONTIGS {
     output:
         tuple val(meta), path("${meta.sample_id}_reads2contig_sorted.bam"), emit: aligned_reads_bam
         tuple val(meta), path("*.bai"), emit: aligned_reads_bai
+        file("versions.yml"), emit: versions
 
     script:
         """
@@ -20,7 +21,7 @@ process ALIGN_READS_TO_CONTIGS {
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            hifiasm: \$(hifiasm --version 2>&1)
+            minimap2: \$(minimap2 --version 2>&1)
             samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
         END_VERSIONS
         """
